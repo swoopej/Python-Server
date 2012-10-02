@@ -1,5 +1,6 @@
 from socket import *
 from time import ctime
+import os
 
 class Server:
 	#class to make a simple http server
@@ -11,16 +12,17 @@ class Server:
 	def run_server(self, port = 21567):
 		self.socket = socket(AF_INET, SOCK_STREAM)
 		self.socket.bind((self.host, self.port))
-		self.socket.listen(5)
 
 		while True:
+			self.socket.listen(5)
 			print 'waiting for connection on port %s...' % port
 			self.clisock, addr = self.socket.accept()
+			os.fork()
 			print 'connected from : ', addr
 			while True:
 				data = self.clisock.recv(1024)
 				if not data:
-					new_server.socket.close()
+					self.clisock.close()
 					break
 				self.clisock.send('You sent the following data: %s' % (data))
 
